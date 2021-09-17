@@ -40,7 +40,6 @@ def create_response(
 ~~~~~~~~~~~~ API ~~~~~~~~~~~~
 """
 
-
 @app.route("/")
 def hello_world():
     return create_response({"content": "hello world!"})
@@ -64,6 +63,40 @@ def delete_show(id):
 
 
 # TODO: Implement the rest of the API here!
+
+@app.route("/shows/<id>", methods=['GET'])
+def get_specific_show(id):
+    if db.getById('shows', int(id)) is None:
+        return create_response(status=404, message="No show with this id exists")
+    return create_response(db.getById('shows', int(id)), 200,"show found")
+
+@app.route("/shows", methods=['POST'])
+def create_show():
+    if (request.form.get("episodes_seen")==None or request.form.get("name")==None):
+        missing = (' (episodes_seen)' if (request.form.get("episodes_seen")==None) else '')+(' (name)' if (request.form.get("name")==None) else '')
+        return create_response({}, 422, '"episodes_seen" and "name" are required parameters. You are missing:{}'.format(missing))
+
+    if (not request.form.get("episodes_seen").isnumeric()):
+        return create_response({}, 422, '"episodes_seen" should be a numeric value')
+    
+    return create_response(db.create('shows',{"episodes_seen": int(request.form.get("episodes_seen")),
+    "name": request.form.get("name")
+    }), 201, "succesfully created the show")
+
+@app.route("/shows/<id>", methods=['PUT'])
+def edit_show(id):
+    new_data = {}
+    if request.form.get("episodes_seen")!=None:
+        new_data["episodes_seen"]=request.form.get("episodes_seen")
+    if request.form.get("name")!=None:
+        new_data["name"]=request.form.get("name")
+
+    ret = db.updateById("shows", int(id), new_data)
+
+    if ret==None:
+        return create_response({}, 404, "Id not found")
+
+    return create_response(ret, 200,"show updated")
 
 """
 ~~~~~~~~~~~~ END API ~~~~~~~~~~~~

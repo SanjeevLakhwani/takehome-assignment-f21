@@ -1,17 +1,15 @@
 <template>
-  <p>I'm a Counter!</p>
+  <div>
+    <p>Count: {{ init }}</p>
+    <button v-on:click="init++">+</button>
+    <button v-on:click="init--">-</button>
+  </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      count: 0
-    };
-  }
+  props: { init: Number }
 };
 </script>
 
-<style>
-</style>
-
+<style></style>

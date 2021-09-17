@@ -1,12 +1,23 @@
 <template>
   <!-- PART 4: Add your code here -->
-  <div></div>
+  <div>
+    <p>{{ name }}</p>
+    <Counter v-bind:init="episodes_seen" />
+  </div>
 </template>
 
 <script>
 // PART 4: Add your code here
-export default {};
+import Counter from "./Counter.vue";
+
+export default {
+  components: { Counter },
+  props: {
+    id: Number,
+    name: String,
+    episodes_seen: Number
+  }
+};
 </script>
 
-<style>
-</style>
+<style></style>
